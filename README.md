@@ -1,11 +1,7 @@
-<h1 align="center"> <a href="https://github.com/elkowar/eww"> EWW - Elkowar's Wacky Widgets <h1> </a>
-<!-- ![eww](https://user-images.githubusercontent.com/72156551/153015496-6111b2c9-4f68-4999-a62e-b85273a926e0.gif) -->
-<img src="https://github.com/saimoomedits/eww-widgets/blob/main/eww.gif"  alt="bar"/><br/></h3>
+# EWW Sideboard fork
+This is the fork of saimoomedits's sideboard I use in my [linux config](https://github.com/fabischw/fedora-dotfiles)
 
-![SS](https://user-images.githubusercontent.com/72156551/154564705-ecd540bd-e8c5-4b03-8827-c76b2ef6eb08.png)
+This fork is meant for archiving the [original config](https://github.com/fabischw/eww-sideboard-fork/tree/cfb2523a4e37ed2979e964998d9a4c37232b2975) and documenting my changes
 
- # Old
-![eww-again](https://user-images.githubusercontent.com/72156551/153015524-00e97b37-6af2-412b-92a2-bf092c2fc5ae.png)
-  
-# Credits
-**[niraj998 - workspace script for eww](https://github.com/niraj998)**
+Please keep in mind that this config does NOT work on it's own as it requires external scripts to function, more information can be found in my [linux config repo](https://github.com/fabischw/fedora-dotfiles)
+

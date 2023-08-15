@@ -1,9 +1,9 @@
-(defvar IMAGE "images/profile.png")
+(defvar IMAGE "~/.config/eww/leftbar_old/images/profile.jpg")
 (defvar greeting "Hey!")
 (defpoll username :interval "48h"  "whoami")
 
-(defpoll uptime :interval "50s" "uptime -p | sed -e 's/up //;s/ hours,/h/;s/ hour,/h/;s/ minutes/m/;s/ minute/m/'")
-(defpoll pkgs :interval "5h" "pacman -Qq | wc -l")
+(defpoll uptime :interval "50s" "uptime -p | sed -e 's/up //;s/ days,/d/;s/ day/d/;s/ hours,/h/;s/ hour,/h/;s/ minutes/m/;s/ minute/m/'")
+(defpoll pkgs :interval "5h" "dnf -Qq | wc -l")
 
 (defpoll time_hour :interval "5m"
        "date +\"%I\"")
@@ -18,19 +18,19 @@
 (defpoll time_month_name :interval "48h"
       "date +\%B")
 
-(defpoll song :interval "3s"  "~/.config/eww/bar/scripts/music_info --song")
-(defpoll song_artist :interval "3s"  "~/.config/eww/leftbar/scripts/music_info --artist")
-(defpoll song_status :interval "3s"  "~/.config/eww/leftbar/scripts/music_info --status")
-(defpoll loop_status :interval "5s"  "~/.config/eww/leftbar/scripts/music_info --loop_ic")
+(defpoll song :interval "3s"  "~/.config/eww/leftbar_old//scripts/music_info --song")
+(defpoll song_artist :interval "3s"  "~/.config/eww/leftbar_old/scripts/music_info --artist")
+(defpoll song_status :interval "3s"  "~/.config/eww/leftbar_old/scripts/music_info --status")
+(defpoll loop_status :interval "5s"  "~/.config/eww/leftbar_old/scripts/music_info --loop_ic")
 
 (defpoll battery :interval "15s" "./scripts/battery --bat")
 (defpoll memory :interval "15s" "scripts/memory")
 (defpoll cpu :interval "17s" "scripts/cpu")
 
 
-(defpoll volume_percent :interval "6s" "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }' | tr -d '%'")
+(defpoll volume_percent :interval "6s" "pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -n 1")
 (defpoll mic_percent :interval "6s" "amixer -D pulse sget Capture | grep 'Left:' | awk -F'[][]' '{ print $2 }' | tr -d '%'")
-(defpoll brightness :interval "6s" "brightnessctl -m -d intel_backlight | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
+(defpoll brightness :interval "6s" "light")
 
 
 
@@ -40,20 +40,20 @@
 (defwidget profile []
 			(box :class "bg_alt" :orientation "v" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false"
 				(box :class "profile_picture" :halign "center" :style "background-image: url('${IMAGE});")
-				(label :class "profile_greeting" :halign "center" :wrap "true" :limit-width 25 :text username)))
+				(label :class "profile_greeting" :halign "center" :wrap "true" :limit-width 25 :text "Hey Fabian")))
 
 
 
 (defwidget close []
 			(box :orientation "h" :space-evenly "false" :vexpand "false" :hexpand "false" :spacing 10 
-				(button :class "close_btn" :halign "center" :tooltip "logout" :onclick "bspc quit" "")
-				(button :class "close_btn" :halign "center" :tooltip "sleep" :onclick "systemctl sleep" "")
-				(button :class "close_btn" :halign "center" :tooltip "reboot" :onclick "reboot" "")))
+				(button :class "close_btn" :halign "center" :tooltip "logout" :onclick "qdbus org.kde.Shutdown /Shutdown logout" "")
+				(button :class "close_btn" :halign "center" :tooltip "sleep" :onclick "systemctl poweroff" "⏻")
+				(button :class "close_btn" :halign "center" :tooltip "reboot" :onclick "systemctl reboot" "")))
 
 
 (defwidget exit []
 			(box :orientation "h" :space-evenly "false" :vexpand "false" :hexpand "false" :spacing 10 
-				(button :class "exit_btn" :halign "center" :tooltip "close leftbar" :onclick "~/.config/eww/leftbar/launch_left" "")))
+				(button :class "exit_btn" :halign "center" :tooltip "close leftbar" :onclick "~/.config/eww/leftbar_old/launch_left" "")))
 
 
 (defwidget time [] 
@@ -123,7 +123,7 @@
       (circular-progress :value battery
                 :class "sys_bat"
                 :thickness 11
-            (label :text ""
+            (label :text "󰁹"
                 :class "sys_icon_bat"
                 :limit-width 2
                 :show_truncated false
@@ -141,7 +141,7 @@
       (circular-progress :value memory
                 :class "sys_mem"
                 :thickness 11
-            (label :text ""
+            (label :text ""
                 :class "sys_icon_mem"
                 :limit-width 2
                 :show_truncated false
@@ -176,7 +176,7 @@
 		(box :vexpand "false" :hexpand "false" :orientation "h" :space-evenly "false" :spacing 30
 				(label :class "fetch_icon_1" :text "os")
 				(label :class "fetch_sep_1" :text "" :halign "center")
-                (label :class "fetch_text_1" :text "arch"))
+                (label :class "fetch_text_1" :text "fedora"))
 		(box :vexpand "false" :hexpand "false" :orientation "h" :space-evenly "false" :spacing 30
 				(label :class "fetch_icon_2" :text "pk")
 				(label :class "fetch_sep" :text "" :valign "center")
@@ -193,10 +193,10 @@
 				(label :halign "start" :class "song" :wrap "false" :limit-width 15 :text song)
 				(label :halign "start" :class "song_artist" :wrap "true" :limit-width 15 :text song_artist))
 				(box :orientation "h" :spacing 8 :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
-					(button :class "song_btn_prev" :onclick "~/.config/eww/leftbar/scripts/music_info --prev" "")
-					(button :class "song_btn_play" :onclick "~/.config/eww/leftbar/scripts/music_info --toggle" song_status)
-					(button :class "song_btn_next" :onclick "~/.config/eww/leftbar/scripts/music_info --next" "")
-					(button :class "song_btn_loop" :onclick "~/.config/eww/leftbar/scripts/music_info --loop" loop_status))))
+					(button :class "song_btn_prev" :onclick "~/.config/eww/leftbar_old/scripts/music_info --prev" "")
+					(button :class "song_btn_play" :onclick "~/.config/eww/leftbar_old/scripts/music_info --toggle" song_status)
+					(button :class "song_btn_next" :onclick "~/.config/eww/leftbar_old/scripts/music_info --next" "")
+					(button :class "song_btn_loop" :onclick "~/.config/eww/leftbar_old/scripts/music_info --loop" loop_status))))
 
 
 
@@ -204,7 +204,7 @@
 
 
 
-(defwindow back
+(defwindow back :monitor 0
   :geometry (geometry :anchor "left center"
              :width "500px"
              :height "88%"
@@ -212,7 +212,7 @@
              :y "20px")
   (bg))
 
-(defwindow pfp
+(defwindow pfp :monitor 0
   :geometry (geometry 
              :width "250px"
              :height "260px"
@@ -221,7 +221,7 @@
   (profile))
 
 
-(defwindow clse
+(defwindow clse :monitor 0
   :geometry (geometry 
              :width "50px"
              :height "50px"
@@ -230,7 +230,7 @@
   (close))
 
 
-(defwindow exit
+(defwindow exit :monitor 0
   :geometry (geometry 
              :width "50px"
              :height "50px"
@@ -238,7 +238,7 @@
              :y "75px")
   (exit))
 
-(defwindow time
+(defwindow time :monitor 0
   :geometry (geometry 
              :width "218px"
              :height "90px"
@@ -247,7 +247,7 @@
   (time))
 
 
-(defwindow day_dot
+(defwindow day_dot :monitor 0
   :geometry (geometry 
              :width "250px"
              :height "50px"
@@ -256,7 +256,7 @@
   (day))
 
 
-(defwindow sys_usg
+(defwindow sys_usg :monitor 0
   :geometry (geometry 
              :width "420px"
              :height "160px"
@@ -266,7 +266,7 @@
 
 
 
-(defwindow status
+(defwindow status :monitor 0
   :geometry (geometry 
              :width "220px"
              :height "160px"
@@ -274,7 +274,7 @@
              :y "520px")
   (stats))
 
-(defwindow fetch :stacking "fg" :focusable "false" :screen 1
+(defwindow fetch :stacking "fg" :focusable "false" :monitor 0
   :geometry (geometry 
              :width "260px"
              :height "140px"
@@ -283,7 +283,7 @@
   (fetch_sys))
 
 
-(defwindow song :stacking "fg" :focusable "false" :screen 1
+(defwindow song :stacking "fg" :focusable "false" :monitor 0
   :geometry (geometry 
              :width "248px"
              :height "180px"
